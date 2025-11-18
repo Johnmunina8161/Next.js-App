@@ -1,82 +1,63 @@
-//'use server';
+import { z } from "zod";
 
-import { z } from 'zod';
-import postgres from 'postgres';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-
-// --- Revenue type for charts ---
+// Revenue table rows
 export type Revenue = {
   month: string;
   revenue: number;
 };
 
-// --- InvoiceForm type ---
-export type InvoiceForm = z.infer<typeof FormSchema>;
-
-// Postgres connection
-export const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
-// --- Types for forms ---
+// Customer dropdown fields
 export type CustomerField = {
   id: string;
   name: string;
 };
 
+// Invoice table rows
+export type InvoicesTable = {
+  id: string;
+  customer_id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  amount: number;
+  status: string;
+  date: string;
+};
+
+// Latest invoice data
+export type LatestInvoiceRaw = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  amount: number;
+};
+
+// Customer table
+export type CustomersTableType = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string;
+  total_invoices: number;
+  total_pending: number;
+  total_paid: number;
+};
+
+// Invoice Form schema
 export const FormSchema = z.object({
+  id: z.string().optional(),
   customerId: z.string(),
   amount: z.coerce.number(),
-  status: z.enum(['pending', 'paid']),
+  status: z.enum(["pending", "paid"]),
 });
 
-// --- Server Actions ---
-export async function createInvoice(formData: FormData) {
-  const { customerId, amount, status } = FormSchema.parse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
+export type InvoiceForm = z.infer<typeof FormSchema>;
 
-  const amountInCents = amount * 100;
-  const date = new Date().toISOString().split('T')[0];
-
-  await sql`
-    INSERT INTO invoices (customer_id, amount, status, date)
-    VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-  `;
-
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
-}
-
-export async function updateInvoice(id: string, formData: FormData) {
-  const { customerId, amount, status } = FormSchema.parse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
-
-  const amountInCents = amount * 100;
-
-  await sql`
-    UPDATE invoices
-    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-    WHERE id = ${id}
-  `;
-
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
-}
-
-export async function deleteInvoice(id: string) {
-  await sql`DELETE FROM invoices WHERE id = ${id}`;
-  revalidatePath('/dashboard/invoices');
-}
-
-// --- User authentication ---
+// Auth User
 export type User = {
   id: string;
   name: string;
   email: string;
-  password: string; // hashed
+  password: string;
 };
