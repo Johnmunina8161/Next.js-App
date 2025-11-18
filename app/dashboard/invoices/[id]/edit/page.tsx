@@ -3,15 +3,16 @@ import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
-import type { ReactElement } from 'react';
 
-interface PageProps {
-  params: { id: string };
+// Type only the params object
+interface PageParams {
+  id: string;
 }
 
-export default async function Page({ params }: PageProps): Promise<ReactElement> {
+export default async function Page({ params }: { params: PageParams }) {
   const { id } = params;
 
+  // Fetch invoice and customers in parallel
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id),
     fetchCustomers(),
@@ -33,3 +34,4 @@ export default async function Page({ params }: PageProps): Promise<ReactElement>
     </main>
   );
 }
+
