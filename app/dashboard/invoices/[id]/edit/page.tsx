@@ -3,16 +3,15 @@ import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
+import type { ReactElement } from 'react';
 
-// Use the built-in Next.js App Router type for async pages
 interface PageProps {
   params: { id: string };
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: PageProps): Promise<ReactElement> {
   const { id } = params;
 
-  // Fetch the invoice and customers in parallel
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id),
     fetchCustomers(),
