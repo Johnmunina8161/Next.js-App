@@ -4,15 +4,13 @@ import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 
-// Type only the params object
-interface PageParams {
-  id: string;
-}
-
-export default async function Page({ params }: { params: PageParams }) {
+export default async function Page({
+  params,
+}: {
+  params: { id: string }; // inline typing
+}) {
   const { id } = params;
 
-  // Fetch invoice and customers in parallel
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id),
     fetchCustomers(),
@@ -34,4 +32,3 @@ export default async function Page({ params }: { params: PageParams }) {
     </main>
   );
 }
-
