@@ -4,8 +4,14 @@ import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 
-export default async function Page(props: { params: { id: string } }) {
-  const { id } = props.params;
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function Page({ params }: PageProps) {
+  const { id } = params;
 
   // Fetch the invoice and customers in parallel
   const [invoice, customers] = await Promise.all([
@@ -13,7 +19,6 @@ export default async function Page(props: { params: { id: string } }) {
     fetchCustomers(),
   ]);
 
-  // If invoice not found → show custom 404 page
   if (!invoice) {
     notFound();
   }
