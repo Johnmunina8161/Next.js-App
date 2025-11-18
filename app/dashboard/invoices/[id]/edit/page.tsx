@@ -4,10 +4,9 @@ import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 
+// Use the built-in Next.js App Router type for async pages
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 }
 
 export default async function Page({ params }: PageProps) {
@@ -28,11 +27,7 @@ export default async function Page({ params }: PageProps) {
       <Breadcrumbs
         breadcrumbs={[
           { label: 'Invoices', href: '/dashboard/invoices' },
-          {
-            label: 'Edit Invoice',
-            href: `/dashboard/invoices/${id}/edit`,
-            active: true,
-          },
+          { label: 'Edit Invoice', href: `/dashboard/invoices/${id}/edit`, active: true },
         ]}
       />
       <Form invoice={invoice} customers={customers} />
