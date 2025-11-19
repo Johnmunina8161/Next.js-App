@@ -4,13 +4,15 @@ import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 
+// Do NOT create your own PageProps type — Next.js infers it
 export default async function Page({
   params,
 }: {
-  params: { id: string }; // inline typing
+  params: { id: string }; // inline typing works reliably
 }) {
   const { id } = params;
 
+  // Fetch data in parallel
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id),
     fetchCustomers(),
@@ -32,3 +34,4 @@ export default async function Page({
     </main>
   );
 }
+
